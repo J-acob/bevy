@@ -31,6 +31,17 @@ macro_rules! render_resource_wrapper {
 
                 std::sync::Arc::try_unwrap(arc).ok()
             }
+
+            pub fn clone_arc(&self) -> std::sync::Arc<$wgpu_type> {
+                let value_ptr = self.0.cast::<$wgpu_type>();
+                let arc = unsafe {
+                    std::sync::Arc::from_raw(value_ptr.cast::<$wgpu_type>())
+                };
+
+                let cloned = std::sync::Arc::clone(&arc);
+                std::mem::forget(arc);
+                cloned
+            }
         }
 
         impl std::ops::Deref for $wrapper_type {
@@ -94,6 +105,10 @@ macro_rules! render_resource_wrapper {
 
             pub fn try_unwrap(self) -> Option<$wgpu_type> {
                 std::sync::Arc::try_unwrap(self.0).ok()
+            }
+
+            pub fn clone_arc(&self) -> std::sync::Arc<$wgpu_type> {
+                self.0.clone()
             }
         }
 

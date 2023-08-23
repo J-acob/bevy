@@ -181,6 +181,10 @@ impl RenderDevice {
         &self.device
     }
 
+    pub fn clone_device(&self) -> std::sync::Arc<wgpu::Device> {
+        self.device.clone_arc()
+    }
+
     pub fn map_buffer(
         &self,
         buffer: &wgpu::BufferSlice,
